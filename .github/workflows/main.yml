@@ -13,40 +13,32 @@ jobs:
 
     steps:
 
-      # Checkout Repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Setup Java 17
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # Verify Java
-      - name: Verify Java Version
+      - name: Verify Java
         run: java -version
 
-      # Show Repository Files (Debugging)
-      - name: List Repository Files
+      - name: List Files
         run: ls -R
 
-      # Build Maven Project
       - name: Build Maven Project
-        run: mvn clean package
+        run: mvn clean package -f MyWebApp/pom.xml
 
-      # Verify WAR File
-      - name: Verify WAR File
-        run: ls target/
+      - name: Verify WAR
+        run: ls MyWebApp/target/
 
-      # Deploy WAR to Tomcat
       - name: Deploy to Tomcat
         run: |
           curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
-          -T target/*.war \
+          -T MyWebApp/target/*.war \
           "http://${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/MyWebApp&update=true"
 
-      # Deployment Success Message
       - name: Deployment Status
-        run: echo "Application Successfully Deployed to Tomcat 🚀"
+        run: echo "Deployment Successful 🚀"
