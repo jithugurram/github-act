@@ -1,4 +1,4 @@
-name: app
+name: Java Tomcat Deployment
 
 on:
   push:
@@ -7,28 +7,46 @@ on:
 
 jobs:
 
-  build:
+  build-and-deploy:
+
     runs-on: ubuntu-latest
 
     steps:
 
+      # Checkout Repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Setup Java 17
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Verify Java
+      # Verify Java
+      - name: Verify Java Version
         run: java -version
 
-      - name: Build Maven Project
-        run: mvn clean install -f MyWebApp/pom.xml
+      # Show Repository Files (Debugging)
+      - name: List Repository Files
+        run: ls -R
 
+      # Build Maven Project
+      - name: Build Maven Project
+        run: mvn clean package
+
+      # Verify WAR File
+      - name: Verify WAR File
+        run: ls target/
+
+      # Deploy WAR to Tomcat
       - name: Deploy to Tomcat
         run: |
           curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
-          -T MyWebApp/target/MyWebApp.war \
+          -T target/*.war \
           "http://${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/MyWebApp&update=true"
+
+      # Deployment Success Message
+      - name: Deployment Status
+        run: echo "Application Successfully Deployed to Tomcat 🚀"
