@@ -21,8 +21,8 @@ jobs:
         run: java -version
 
       - name: java-compile
-        run: javac App.java
+        run: javac *.java
 
       - name: java run app
-        run: java App.java
+        run: java *.java
    
