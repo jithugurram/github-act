@@ -1,0 +1,28 @@
+name: app
+on:
+ push:
+   branches: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+steps:
+  - name: checkout
+    uses: actions/checkout@v1
+
+  - name: setup-java
+    uses: actions/setup-java@v1
+    with: 
+      distribution: 'temurin'
+      java-version: '17'
+
+  - name: verify-java
+    run: java -version
+
+  - name: java-compile
+    run: javac app.java
+
+  - name: java run app
+    run: java app.java
+   
